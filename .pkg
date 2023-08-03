@@ -1,0 +1,8 @@
+[boost]
+  url=git@github.com:motis-project/boost.git
+  branch=master
+  commit=be5235eb2258d2ec19e32546ab767a62311d9b46
+[rapidjson]
+  url=git@github.com:motis-project/rapidjson.git
+  branch=master
+  commit=e7a1ac95c7840c6f4351abead02b1f7a02874197

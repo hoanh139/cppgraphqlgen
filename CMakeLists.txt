@@ -36,7 +36,7 @@ endif()
 
 option(GRAPHQL_BUILD_SCHEMAGEN "Build the schemagen tool." ON)
 option(GRAPHQL_BUILD_CLIENTGEN "Build the clientgen tool." ON)
-option(GRAPHQL_BUILD_TESTS "Build the tests and sample schema library." ON)
+option(GRAPHQL_BUILD_TESTS "Build the tests and sample schema library." OFF)
 
 if(GRAPHQL_BUILD_SCHEMAGEN)
   list(APPEND VCPKG_MANIFEST_FEATURES "schemagen")
@@ -68,6 +68,8 @@ else()
 endif()
 
 project(cppgraphqlgen VERSION ${LATEST_VERSION})
+
+include(cmake/pkg.cmake)
 
 set(GRAPHQL_INSTALL_INCLUDE_DIR include CACHE PATH "Header file install directory")
 set(GRAPHQL_INSTALL_TOOLS_DIR bin CACHE PATH "schemagen install directory")

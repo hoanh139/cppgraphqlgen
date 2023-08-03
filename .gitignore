@@ -37,6 +37,11 @@ settings.json
 /test/response_tests
 /test/today_tests
 /test/nointrospection_tests
-build/
+/*build*
+/*vcpkg*
+/.idea
+/deps
+/.pkg.lock
+/.pkg.mutex
 install/
 isenseconfig/

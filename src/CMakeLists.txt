@@ -216,11 +216,6 @@ if(GRAPHQL_BUILD_CLIENTGEN)
     add_dependencies(clientgen_version build_clientgen_rc)
     target_link_libraries(clientgen PRIVATE clientgen_version)
   endif()
-
-  install(TARGETS clientgen
-    EXPORT cppgraphqlgen-targets
-    CONFIGURATIONS ${GRAPHQL_INSTALL_CONFIGURATIONS}
-    RUNTIME DESTINATION ${GRAPHQL_INSTALL_TOOLS_DIR}/${PROJECT_NAME})
 endif()
 
 # schemagen
@@ -264,11 +259,6 @@ if(GRAPHQL_BUILD_SCHEMAGEN)
     add_dependencies(schemagen_version build_schemagen_rc)
     target_link_libraries(schemagen PRIVATE schemagen_version)
   endif()
-
-  install(TARGETS schemagen
-    EXPORT cppgraphqlgen-targets
-    CONFIGURATIONS ${GRAPHQL_INSTALL_CONFIGURATIONS}
-    RUNTIME DESTINATION ${GRAPHQL_INSTALL_TOOLS_DIR}/${PROJECT_NAME})
 endif()
 
 # Common schemagen and clientgen filesystem and Boost dependencies
@@ -308,12 +298,11 @@ if(GRAPHQL_BUILD_SCHEMAGEN OR GRAPHQL_BUILD_CLIENTGEN)
   #   c++fs
   check_filesystem_impl("stdc++fs;c++fs" STD_FILESYTEM)
 
-  find_package(Boost QUIET REQUIRED COMPONENTS program_options)
   if(GRAPHQL_BUILD_SCHEMAGEN)
-    target_link_libraries(schemagen PRIVATE Boost::program_options)
+    target_link_libraries(schemagen PRIVATE boost-program_options)
   endif()
   if(GRAPHQL_BUILD_CLIENTGEN)
-    target_link_libraries(clientgen PRIVATE Boost::program_options)
+    target_link_libraries(clientgen PRIVATE boost-program_options)
   endif()
 endif()
 
@@ -382,13 +371,10 @@ endif()
 option(GRAPHQL_USE_RAPIDJSON "Use RapidJSON for JSON serialization." ON)
 
 if(GRAPHQL_USE_RAPIDJSON)
-  find_package(RapidJSON CONFIG REQUIRED)
-
   set(BUILD_GRAPHQLJSON ON)
   add_library(graphqljson JSONResponse.cpp)
   add_library(cppgraphqlgen::graphqljson ALIAS graphqljson)
-  target_link_libraries(graphqljson PUBLIC graphqlresponse)
-  target_include_directories(graphqljson SYSTEM PRIVATE ${RAPIDJSON_INCLUDE_DIRS})
+  target_link_libraries(graphqljson PUBLIC graphqlresponse rapidjson)
 
   if(GRAPHQL_UPDATE_VERSION)
     update_version_rc(graphqljson)
@@ -403,53 +389,9 @@ if(GRAPHQL_USE_RAPIDJSON)
   endif()
 endif()
 
-install(TARGETS
-    graphqlclient
-    graphqlpeg
-    graphqlcoro
-    graphqlresponse
-    graphqlservice
-  EXPORT cppgraphqlgen-targets
-  RUNTIME DESTINATION bin
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib)
-
-install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/GraphQLClient.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/GraphQLParse.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/GraphQLResponse.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/GraphQLService.h
-  CONFIGURATIONS ${GRAPHQL_INSTALL_CONFIGURATIONS}
-  DESTINATION ${GRAPHQL_INSTALL_INCLUDE_DIR}/graphqlservice)
-
-install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/Awaitable.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/Base64.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/Grammar.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/Introspection.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/Schema.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/SortedMap.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/SyntaxTree.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/internal/Version.h
-  CONFIGURATIONS ${GRAPHQL_INSTALL_CONFIGURATIONS}
-  DESTINATION ${GRAPHQL_INSTALL_INCLUDE_DIR}/graphqlservice/internal)
-
 # graphqljson
 if(BUILD_GRAPHQLJSON)
   target_link_libraries(graphqljson PUBLIC graphqlresponse)
-
-  install(TARGETS graphqljson
-    EXPORT cppgraphqlgen-targets
-    RUNTIME DESTINATION bin
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib)
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../include/graphqlservice/JSONResponse.h
-    CONFIGURATIONS ${GRAPHQL_INSTALL_CONFIGURATIONS}
-    DESTINATION ${GRAPHQL_INSTALL_INCLUDE_DIR}/graphqlservice)
 else()
   set(GRAPHQL_BUILD_TESTS OFF CACHE BOOL "GRAPHQL_BUILD_TESTS depends on BUILD_GRAPHQLJSON" FORCE)
 endif()
-
-install(EXPORT cppgraphqlgen-targets
-  NAMESPACE cppgraphqlgen::
-  DESTINATION ${GRAPHQL_INSTALL_CMAKE_DIR}/${PROJECT_NAME})
