@@ -34,8 +34,8 @@ if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   endif()
 endif()
 
-option(GRAPHQL_BUILD_SCHEMAGEN "Build the schemagen tool." ON)
-option(GRAPHQL_BUILD_CLIENTGEN "Build the clientgen tool." ON)
+option(GRAPHQL_BUILD_SCHEMAGEN "Build the schemagen tool." OFF)
+option(GRAPHQL_BUILD_CLIENTGEN "Build the clientgen tool." OFF)
 option(GRAPHQL_BUILD_TESTS "Build the tests and sample schema library." OFF)
 
 if(GRAPHQL_BUILD_SCHEMAGEN)
@@ -51,7 +51,7 @@ if(GRAPHQL_BUILD_TESTS)
 endif()
 
 if(GRAPHQL_BUILD_SCHEMAGEN AND GRAPHQL_BUILD_CLIENTGEN)
-  option(GRAPHQL_UPDATE_SAMPLES "Regenerate the sample schema sources whether or not we're building the tests." ON)
+  option(GRAPHQL_UPDATE_SAMPLES "Regenerate the sample schema sources whether or not we're building the tests." OFF)
 
   if(GRAPHQL_UPDATE_SAMPLES)
     list(APPEND VCPKG_MANIFEST_FEATURES "update-samples")
@@ -75,8 +75,6 @@ set(GRAPHQL_INSTALL_INCLUDE_DIR include CACHE PATH "Header file install director
 set(GRAPHQL_INSTALL_TOOLS_DIR bin CACHE PATH "schemagen install directory")
 set(GRAPHQL_INSTALL_CMAKE_DIR lib/cmake CACHE PATH "CMake config files install directory")
 set(GRAPHQL_INSTALL_CONFIGURATIONS ${CMAKE_CONFIGURATION_TYPES} CACHE STRING "Configurations which perform a full install")
-
-option(BUILD_SHARED_LIBS "Build shared libraries instead of static libs" OFF)
 
 if(VCPKG_TARGET_TRIPLET)
   message(STATUS "Using ${VCPKG_TARGET_TRIPLET} triplet with vcpkg")
@@ -123,12 +121,3 @@ option(GRAPHQL_UPDATE_VERSION "Regenerate graphqlservice/internal/Version.h and 
 
 add_subdirectory(cmake)
 add_subdirectory(src)
-
-if(GRAPHQL_BUILD_TESTS OR GRAPHQL_UPDATE_SAMPLES)
-  add_subdirectory(samples)
-
-  if(GRAPHQL_BUILD_TESTS)
-    include(CTest)
-    add_subdirectory(test)
-  endif()
-endif()
