@@ -34,7 +34,7 @@ if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   endif()
 endif()
 
-option(GRAPHQL_BUILD_SCHEMAGEN "Build the schemagen tool." OFF)
+option(GRAPHQL_BUILD_SCHEMAGEN "Build the schemagen tool." ON)
 option(GRAPHQL_BUILD_CLIENTGEN "Build the clientgen tool." OFF)
 option(GRAPHQL_BUILD_TESTS "Build the tests and sample schema library." OFF)
 
